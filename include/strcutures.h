@@ -21,6 +21,7 @@ typedef struct ressources{
 }ressources;
 
 typedef struct Sommet_ville{
+typedef struct Summit_city{
     int ID;
     char type[50];
     char nom[50];
@@ -31,6 +32,11 @@ typedef struct Sommet_ville{
 
 typedef struct Tab_sommets{
     Sommet_ville* sommets;
+    
+}Summit_city;
+
+typedef struct Tab_sommets{
+    Summit_city* sommets;
     int n_sommets;
     Bat* batiments;
     int n_bats;
