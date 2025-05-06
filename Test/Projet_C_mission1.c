@@ -31,11 +31,13 @@ void creation_route(Graphe *G, int id_depart, int id_arrivee, int distance_voulu
     G->chemins[id_depart][id_arrivee].capacité = capacite;
     G->chemins[id_depart][id_arrivee].etat = 100;
 }
+
 void initialiser_tableau_batiment(Tab_sommets *tableau_bats_sommets, int nombre)
 {
     tableau_bats_sommets->batiments = malloc(nombre * sizeof(Bat));
     tableau_bats_sommets->n_bats = 0;
 }
+
 void ajouter_bat(Bat batiment_quelconque, Tab_sommets *tableau_bats_sommets, Graphe *G, int id_desire)
 {
     int i = 0;
