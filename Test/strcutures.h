@@ -53,3 +53,9 @@ typedef struct Graphe{
 
 }Graphe;
 
+//Fonction
+
+// 1.  Déclaration du graphe
+void genererTypes();
+void ajouterArc();
+void afficherGraphe();
