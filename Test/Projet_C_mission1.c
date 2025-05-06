@@ -39,7 +39,7 @@ void initialiser_tableau_batiment(Tab_sommets *tableau_bats_sommets, int nombre)
 void ajouter_bat(Bat batiment_quelconque, Tab_sommets *tableau_bats_sommets, Graphe *G, int id_desire)
 {
     int i = 0;
-    int id_desire = 0;
+    id_desire = 0;
     while (1)
     {
         int id = tableau_bats_sommets->batiments->ID_Bat;
