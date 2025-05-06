@@ -20,17 +20,17 @@ typedef struct ressources{
     char type[50];
 }ressources;
 
-typedef struct Summit_city{
+typedef struct Sommet_ville{
     int ID;
     char type[50];
     char nom[50];
     int population;
     Bat* batiment;
-    
-}Summit_city;
+
+}Sommet_ville;
 
 typedef struct Tab_sommets{
-    Summit_city* sommets;
+    Sommet_ville* sommets;
     int n_sommets;
     Bat* batiments;
     int n_bats;
@@ -38,7 +38,7 @@ typedef struct Tab_sommets{
 
 typedef struct Graphe{
     
-    Summit_city* sommets;
+    Sommet_ville* sommets;
     Tab_sommets* sommets_TAB;
     Route chemins[taille_max][taille_max];
 
@@ -49,4 +49,5 @@ typedef struct Route{
     int distance;
     int etat;
     int capacité;
+    char etat_actuel[50];
 }Route;
