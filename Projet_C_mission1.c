@@ -114,8 +114,7 @@ void seisme(Sommet_ville* sommet_seisme, int seisme_impact, Tab_sommets* sommet,
             G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat=G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat-seisme_impact;
             G->chemins[sommet_seisme[ville_aleatoire].ID][j].capacité= G->chemins[sommet_seisme[ville_aleatoire].ID][j].capacité-seisme_impact;
             if(G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat==0){
-                G->chemins[sommet_seisme[ville_aleatoire].ID][j].eta
-            }
+
         }
 
         if(sommet_seisme[ville_aleatoire].batiment[i].etat==0){
@@ -125,8 +124,8 @@ void seisme(Sommet_ville* sommet_seisme, int seisme_impact, Tab_sommets* sommet,
 
 }
 
-void verifier_accessibilite(Graphe* G, int ID_sommet_debut){
-
+void verifier_accessibilite(Graphe* G, int ID_sommet_debut)
+{
     srand(time(NULL));
     ID_sommet_debut=rand()% G->sommets_TAB->n_sommets;
 
