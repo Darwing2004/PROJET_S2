@@ -2,27 +2,57 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N 50
-#define MAX_ARCS 100
+#define N 10        // Nombre de sommets
+#define MAX_ARCS 20 // Nombre maximum d'arcs
 
-const char *types[] = {"Ville", "Hopital", "Entrepot"};
+typedef enum TypeSommet
+{
+    VILLE,
+    HOPITAL,
+    ENTREPOT,
+} TypeSommet;
+
+const char *nomTypes[] = {"Ville", "Hopital", "Entrepot"};
+
+typedef struct Sommet
+{
+    int id;
+    TypeSommet type;
+} Sommet;
+
+// Tableau de sommets
+Sommet sommets[N];
 
 // Matrice d'adjacence pondérée
 int graphe[N][N] = {0};
 
-// Tableai des types de sommets
-const char *sommetType[N];
-
-void genererTypes()
+// Génère des types aléatoires pour les sommets
+void genererSommets()
 {
     for (int i = 0; i < N; i++)
     {
-        int t = rand() % 3;
-        sommetType[i] = types[t];
+        sommets[i].id = i;
+        if (i < (N * 0.5))
+        {
+            sommets[i].type = 0;
+        }
+        else if (i < (N * 0.75) && sommets[i].type != 1)
+        {
+            sommets[i].type = 1;
+        }
+        else
+        {
+            sommets[i].type = 2;
+        }
     }
 }
 
-void ajouterArc()
+void ajouterArc(int u, int v, int distance)
+{
+    graphe[u][v] = distance;
+}
+
+void genererArc()
 {
     int arcsAjoutes = 0;
 
@@ -42,10 +72,10 @@ void ajouterArc()
 
 void afficherGraphe()
 {
-    printf("Types des sommets : \n");
+    printf("Types des sommets :\n");
     for (int i = 0; i < N; i++)
     {
-        printf("Sommet %d : %s\n", i, sommetType[i]);
+        printf("Sommet %d : %s\n", sommets[i].id, nomTypes[sommets[i].type]);
     }
 
     printf("\nArcs du graphe :\n");
@@ -53,9 +83,12 @@ void afficherGraphe()
     {
         for (int j = 0; j < N; j++)
         {
-            if (graphe[i][j] != 0)
+            if (graphe[i][j] > 0)
             {
-                printf("%s %d -> %s %d avec distance %d\n", sommetType[i], i, sommetType[j], j, graphe[i][j]);
+                printf("%s %d → %s %d avec distance %d\n",
+                       nomTypes[sommets[i].type], i,
+                       nomTypes[sommets[j].type], j,
+                       graphe[i][j]);
             }
         }
     }
@@ -65,8 +98,8 @@ int main()
 {
     srand(time(NULL));
 
-    genererTypes();
-    ajouterArc();
+    genererSommets();
+    genererArc();
     afficherGraphe();
 
     return 0;
