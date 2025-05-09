@@ -4,6 +4,7 @@
 
 typedef struct Bat{
     char type[50];
+    char etat_courant[50];
     int ID_Bat;
     int etage;
     int x;
@@ -12,7 +13,7 @@ typedef struct Bat{
     int age;
     int capacite;
     int etat;//allant de 0 à 100
-    ressources bat_stock;
+    ressources* bat_stock;
 }Bat;
 
 typedef struct ressources{
@@ -39,7 +40,6 @@ typedef struct Tab_sommets{
 typedef struct Graphe{
     
     Sommet_ville* sommets;
-    Sommet_ville* sommets;
     Tab_sommets* sommets_TAB;
     Route chemins[taille_max][taille_max];
 
@@ -50,6 +50,5 @@ typedef struct Route{
     int distance;
     int etat;
     int capacité;
-    char etat_actuel[50];
     char etat_actuel[50];
 }Route;
