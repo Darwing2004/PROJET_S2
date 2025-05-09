@@ -18,28 +18,22 @@ typedef struct Bat{
     char type[50];
     int ID_Bat;
     int etage;
-    int x;
-    int y;
-    int hauteur;
-    int age;
     int capacite;
     int etat;//allant de 0 à 100
     ressources bat_stock;
 }Bat;
 
 
-
-typedef struct Sommet_ville{
+typedef struct Sommet{
     int ID;
     char type[50];
     char nom[50];
     int population;
     Bat* batiment;
-    
-}Sommet_ville;
+}Sommet;
 
 typedef struct Tab_sommets{
-    Sommet_ville* sommets;
+    Sommet* sommets;
     int n_sommets;
     Bat* batiments;
     int n_bats;
@@ -47,7 +41,7 @@ typedef struct Tab_sommets{
 
 typedef struct Graphe{
     
-    Sommet_ville* sommets;
+    Sommet* sommets;
     Tab_sommets* sommets_TAB;
     Route chemins[taille_max][taille_max];
 
