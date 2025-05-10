@@ -27,6 +27,7 @@ typedef struct Sommet_ville{
     char nom[50];
     int population;
     Bat* batiment;
+    int n_bats;
 
 }Sommet_ville;
 

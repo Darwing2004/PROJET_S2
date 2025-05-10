@@ -40,31 +40,39 @@ void ajouter_bat(Bat batiment_quelconque, Tab_sommets* tableau_bats_sommets, Gra
    
     
     G->sommets[tableau_bats_sommets->n_bats].batiment[i++]=batiment_quelconque;
-    tableau_bats_sommets->batiments=realloc(tableau_bats_sommets->sommets->batiment, (tableau_bats_sommets->n_bats + 1) * sizeof(Bat));
+    tableau_bats_sommets->n_bats=G->sommets->n_bats;
+    tableau_bats_sommets->batiments=realloc(tableau_bats_sommets->sommets->batiment, (tableau_bats_sommets->n_bats + 1) * sizeof(Bat));//modifie la taille du tableau au fur et à mesure que l'on ajoute un batiments
     tableau_bats_sommets->batiments[tableau_bats_sommets->n_bats++]=batiment_quelconque;
     G->sommets[tableau_bats_sommets->n_bats].ID=tableau_bats_sommets->n_bats;
 
 }
 
-void supprimer_Bat(Tab_sommets* tableau_bats_sommets, Bat* bat_a_supprimer, Sommet_ville* sommet_bat_supp){
+void supprimer_Bat(Tab_sommets* tableau_bats_sommets, Bat* bat_a_supprimer, Sommet_ville* sommet_bat_supp, Graphe* G){
 
-    Bat* cur = bat_a_supprimer;
-    Bat* fin = tableau_bats_sommets->batiments + tableau_bats_sommets->n_bats;
-    Bat* cur2 = bat_a_supprimer;
-    Bat* fin2 = sommet_bat_supp->batiment + tableau_bats_sommets->n_bats;
+        for (int i = 0; i < tableau_bats_sommets->n_bats; i++) {
+            if (tableau_bats_sommets->batiments[i].ID_Bat == bat_a_supprimer->ID_Bat) {
+                for (int j = i; j < tableau_bats_sommets->n_bats - 1; j++) {
+                    tableau_bats_sommets->batiments[j] = tableau_bats_sommets->batiments[j + 1];
+                }
+                tableau_bats_sommets->n_bats--;
+                tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
+                break;
+            }
+        }
+         
+            for (int i = 0; i < sommet_bat_supp->n_bats; i++) {
+                if (G->sommets->batiment[i].ID_Bat == bat_a_supprimer->ID_Bat) {
+                    for (int j = i; j < sommet_bat_supp->n_bats - 1; j++) {
+                        sommet_bat_supp->batiment[j] = sommet_bat_supp->batiment[j + 1];
+                    }
+                    G->sommets->n_bats--;
+                    G->sommets->n_bats = realloc(sommet_bat_supp->batiment, G->sommets->n_bats * sizeof(Bat));
+                    break;
+                }
+            }
+    }
     
-    while (cur + 1 < fin ) {
-        *cur = *(cur + 1);
-        cur++;
-    }
-    while (cur2 + 1 < fin2 ) {
-        *cur2 = *(cur2 + 1);
-        cur2++;
-    }
-    sommet_bat_supp->batiment=NULL;
-    tableau_bats_sommets->n_bats--;
-    tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
-}
+
 
 void ajouter_sommet(Tab_sommets* sommet,Graphe* G, Sommet_ville sommet_quelconque){
     int id=0;
@@ -123,7 +131,7 @@ void seisme(Sommet_ville* sommet_seisme, int seisme_impact, Tab_sommets* sommet,
         }
 
         if(sommet_seisme[ville_aleatoire].batiment[i].etat==0){
-            supprimer_Bat(sommet, sommet_seisme[ville_aleatoire].batiment,sommet_seisme);
+            supprimer_Bat(sommet, sommet_seisme[ville_aleatoire].batiment,sommet_seisme, G);
             strcpy(sommet_seisme[ville_aleatoire].batiment[i].etat_courant, "détruit");
         }     
     }
@@ -164,6 +172,8 @@ Sommet_ville rechercher_etat_ville(Graphe* G, int id_ville_recherchee){
         return G->sommets[i];
     }
 }
+
+
 void ville_connectee(Graphe* G, int sommet, int* sommet_parcouru, int groupe_id) {
         sommet_parcouru[sommet] = groupe_id;
     
