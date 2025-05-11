@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "strcutures.h"
+#include "structures.h"
 #include <time.h>
 
 void initialiser_graphe_entier(Graphe* G){
@@ -19,7 +19,7 @@ void creation_route(Graphe* G, int id_depart, int id_arrivee, int distance_voulu
 
 
     srand(time(NULL));
-    int capacite_valeurs[]={1,2,3,4,5,6,6,6,6,7,7,7,7,7,8,8,8,9,10};
+    int capacite_valeurs[]={5,5,6,6,6,6,7,7,7,7,7,8,8,8,9,10};
     int taille_tab_capacite=sizeof(capacite_valeurs)/sizeof(capacite_valeurs[0]);
     int capacite_aleatoire=rand()%taille_tab_capacite;
     int capacite=capacite_valeurs[capacite_aleatoire];
@@ -27,50 +27,57 @@ void creation_route(Graphe* G, int id_depart, int id_arrivee, int distance_voulu
 
     G->chemins[id_depart][id_arrivee].distance=distance_voulue;
     G->chemins[id_depart][id_arrivee].capacité=capacite;
-    G->chemins[id_depart][id_arrivee].etat=100;
+    G->chemins[id_depart][id_arrivee].etat=50;
+    strcpy(G->chemins[id_depart][id_arrivee].etat_actuel, "bon état");
         
 }
 void initialiser_tableau_batiment(Tab_sommets* tableau_bats_sommets, int nombre){
     tableau_bats_sommets->batiments=malloc(nombre*sizeof(Bat));
     tableau_bats_sommets->n_bats=0;
 }
-void ajouter_bat(Bat batiment_quelconque, Tab_sommets* tableau_bats_sommets, Graphe* G, int id_desire){
+void ajouter_bat(Bat batiment_quelconque, Tab_sommets* tableau_bats_sommets, Graphe* G){
     int i=0;
-    int id_desire=0;
-    while(1){
-        int id=tableau_bats_sommets->batiments->ID_Bat;
-        id++;
-    }
-    G->sommets[id_desire].batiment[i++]=batiment_quelconque;
-    tableau_bats_sommets->batiments=realloc(tableau_bats_sommets->sommets->batiment, (tableau_bats_sommets->n_bats + 1) * sizeof(Bat));
-    tableau_bats_sommets->batiments[tableau_bats_sommets->n_bats++]=batiment_quelconque;
-
-}
-
-void supprimer_Bat(Tab_sommets* tableau_bats_sommets, Bat* bat_a_supprimer, Sommet_ville* sommet_bat_supp){
-
-    Bat* cur = bat_a_supprimer;
-    Bat* fin = tableau_bats_sommets->batiments + tableau_bats_sommets->n_bats;
-    Bat* cur2 = bat_a_supprimer;
-    Bat* fin2 = sommet_bat_supp->batiment + tableau_bats_sommets->n_bats;
+   
     
-    while (cur + 1 < fin ) {
-        *cur = *(cur + 1);
-        cur++;
-    }
-    while (cur2 + 1 < fin2 ) {
-        *cur2 = *(cur2 + 1);
-        cur2++;
-    }
-    sommet_bat_supp->batiment=NULL;
-    tableau_bats_sommets->n_bats--;
-    tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
+    G->sommets[tableau_bats_sommets->n_bats].batiment[i++]=batiment_quelconque;
+    tableau_bats_sommets->n_bats=G->sommets->n_bats;
+    tableau_bats_sommets->batiments=realloc(tableau_bats_sommets->sommets->batiment, (tableau_bats_sommets->n_bats + 1) * sizeof(Bat));//modifie la taille du tableau au fur et à mesure que l'on ajoute un batiments
+    tableau_bats_sommets->batiments[tableau_bats_sommets->n_bats++]=batiment_quelconque;
+    G->sommets[tableau_bats_sommets->n_bats].ID=tableau_bats_sommets->n_bats;
+
 }
+
+void supprimer_Bat(Tab_sommets* tableau_bats_sommets, Bat* bat_a_supprimer, Sommet_ville* sommet_bat_supp, Graphe* G){
+
+        for (int i = 0; i < tableau_bats_sommets->n_bats; i++) {
+            if (tableau_bats_sommets->batiments[i].ID_Bat == bat_a_supprimer->ID_Bat) {
+                for (int j = i; j < tableau_bats_sommets->n_bats - 1; j++) {
+                    tableau_bats_sommets->batiments[j] = tableau_bats_sommets->batiments[j + 1];
+                }
+                tableau_bats_sommets->n_bats--;
+                tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
+                break;
+            }
+        }
+         
+            for (int i = 0; i < sommet_bat_supp->n_bats; i++) {
+                if (G->sommets->batiment[i].ID_Bat == bat_a_supprimer->ID_Bat) {
+                    for (int j = i; j < sommet_bat_supp->n_bats - 1; j++) {
+                        sommet_bat_supp->batiment[j] = sommet_bat_supp->batiment[j + 1];
+                    }
+                    G->sommets->n_bats--;
+                    G->sommets->n_bats = realloc(sommet_bat_supp->batiment, G->sommets->n_bats * sizeof(Bat));
+                    break;
+                }
+            }
+    }
+    
+
 
 void ajouter_sommet(Tab_sommets* sommet,Graphe* G, Sommet_ville sommet_quelconque){
     int id=0;
 
-    sommet->sommets=realloc(sommet->sommets, (sommet->n_sommets + 1) * sizeof(Bat));
+    sommet->sommets=realloc(sommet->sommets, (sommet->n_sommets + 1) * sizeof(Sommet_ville));
     sommet->sommets[sommet->n_sommets++]=sommet_quelconque;
     G->sommets[sommet->n_sommets++]=sommet_quelconque;
     G->sommets[sommet->n_sommets++].ID=sommet->n_sommets;
@@ -113,16 +120,21 @@ void seisme(Sommet_ville* sommet_seisme, int seisme_impact, Tab_sommets* sommet,
         for(int j=0; j<sommet->n_sommets; j++){
             G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat=G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat-seisme_impact;
             G->chemins[sommet_seisme[ville_aleatoire].ID][j].capacité= G->chemins[sommet_seisme[ville_aleatoire].ID][j].capacité-seisme_impact;
+
             if(G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat==0){
-                G->chemins[sommet_seisme[ville_aleatoire].ID][j].eta
+                strcpy(G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat_actuel, "detruite");
+            }
+
+            if(G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat<50 && G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat>0){
+                strcpy(G->chemins[sommet_seisme[ville_aleatoire].ID][j].etat_actuel, "endommagée");
             }
         }
 
         if(sommet_seisme[ville_aleatoire].batiment[i].etat==0){
-            supprimer_Bat(sommet, sommet_seisme[ville_aleatoire].batiment,sommet_seisme);
+            supprimer_Bat(sommet, sommet_seisme[ville_aleatoire].batiment,sommet_seisme, G);
+            strcpy(sommet_seisme[ville_aleatoire].batiment[i].etat_courant, "détruit");
         }     
- }
-
+    }
 }
 
 void verifier_accessibilite(Graphe* G, int ID_sommet_debut){
@@ -133,15 +145,18 @@ void verifier_accessibilite(Graphe* G, int ID_sommet_debut){
     for(int j=0; j<G->sommets_TAB->n_sommets; j++){
         if(G->chemins[ID_sommet_debut][j].etat==0)
         {
-            printf("Le sommet %s est inacessible en partant du sommet %s", G->sommets[ID_sommet_debut].nom, G->sommets[j].nom);
-        }     
+            printf("Le sommet %s est inaccessible en partant du sommet %s", G->sommets[j].nom, G->sommets[ID_sommet_debut].nom);
+        }
+        else if(G->chemins[ID_sommet_debut][j].etat>0){
+            printf("Le sommet %s est accessible en partant du sommet %s", G->sommets[j].nom, G->sommets[ID_sommet_debut].nom);
+        }
     }
     
 }
-void afficher_route(Graphe* G, int ID_sommet_debut){
+void afficher_route(Graphe* G){
 
     srand(time(NULL));
-    ID_sommet_debut=rand()% G->sommets_TAB->n_sommets;
+    int ID_sommet_debut=rand()% G->sommets_TAB->n_sommets;
 
     for(int j=0; j<G->sommets_TAB->n_sommets; j++){
         if(G->chemins[ID_sommet_debut][j].etat>0){
@@ -150,4 +165,45 @@ void afficher_route(Graphe* G, int ID_sommet_debut){
         }
     }
 }
+Sommet_ville rechercher_etat_ville(Graphe* G, int id_ville_recherchee){
 
+    for(int i=0; i<G->sommets_TAB->n_sommets; i++){
+        if(G->sommets[i].ID==id_ville_recherchee)
+        return G->sommets[i];
+    }
+}
+
+
+void ville_connectee(Graphe* G, int sommet, int* sommet_parcouru, int groupe_id) {
+        sommet_parcouru[sommet] = groupe_id;
+    
+        for (int i = 0; i < G->sommets_TAB->n_sommets; i++) {
+            if (G->chemins[sommet][i].etat > 0 && sommet_parcouru[i] == 0) {
+                ville_connectee(G, i, sommet_parcouru, groupe_id);
+            }
+        }
+    }
+    
+void afficher_groupes_connexes(Graphe* G) {
+
+        int n = G->sommets_TAB->n_sommets;
+        int sommet_parcouru[taille_max] = {0};
+        int groupe_id = 1;
+    
+        for (int i = 0; i < n; i++) {
+            if (sommet_parcouru[i] == 0) {
+                ville_connectee(G, i, sommet_parcouru, groupe_id);
+                groupe_id++;
+            }
+        }
+    
+        for (int j = 1; j < groupe_id; j++) {
+            printf("Groupe %d : ", j);
+            for (int i = 0; i < n; i++) {
+                if (sommet_parcouru[i] == j) {
+                    printf("%s ", G->sommets[i].nom);
+                }
+            }
+            printf("\n");
+        }
+    }
