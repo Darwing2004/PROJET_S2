@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "structures.h"
 #include <time.h>
 
@@ -35,6 +36,7 @@ void initialiser_tableau_batiment(Tab_sommets* tableau_bats_sommets, int nombre)
     tableau_bats_sommets->batiments=malloc(nombre*sizeof(Bat));
     tableau_bats_sommets->n_bats=0;
 }
+
 void ajouter_bat(Bat batiment_quelconque, Tab_sommets* tableau_bats_sommets, Graphe* G){
     int i=0;
    
@@ -66,7 +68,7 @@ void supprimer_Bat(Tab_sommets* tableau_bats_sommets, Bat* bat_a_supprimer, Somm
                         sommet_bat_supp->batiment[j] = sommet_bat_supp->batiment[j + 1];
                     }
                     G->sommets->n_bats--;
-                    G->sommets->n_bats = realloc(sommet_bat_supp->batiment, G->sommets->n_bats * sizeof(Bat));
+                    sommet_bat_supp->batiment = realloc(sommet_bat_supp->batiment, G->sommets->n_bats * sizeof(Bat));
                     break;
                 }
             }
