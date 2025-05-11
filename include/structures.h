@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #define taille_max 100
 
+typedef struct ressources{
+    int quantite;
+    char type[50];
+}ressources;
+
 typedef struct Bat{
     char type[50];
     char etat_courant[50];
@@ -16,10 +21,7 @@ typedef struct Bat{
     ressources* bat_stock;
 }Bat;
 
-typedef struct ressources{
-    int quantite;
-    char type[50];
-}ressources;
+
 
 typedef struct Sommet_ville{
     int ID;
@@ -30,6 +32,15 @@ typedef struct Sommet_ville{
     int n_bats;
 
 }Sommet_ville;
+
+typedef struct Route{
+
+    int distance;
+    int etat;
+    int capacité;
+    char etat_actuel[50];
+}Route;
+
 
 typedef struct Tab_sommets{
     Sommet_ville* sommets;
@@ -46,10 +57,3 @@ typedef struct Graphe{
 
 }Graphe;
 
-typedef struct Route{
-
-    int distance;
-    int etat;
-    int capacité;
-    char etat_actuel[50];
-}Route;
