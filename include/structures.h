@@ -21,8 +21,6 @@ typedef struct Bat{
     ressources* bat_stock;
 }Bat;
 
-
-
 typedef struct Sommet_ville{
     int ID;
     char type[50];
