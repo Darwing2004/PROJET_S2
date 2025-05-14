@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "strcutures.h"
+#include "structures.h"
 #include <time.h>
+
+#define N 50
 
 void initialiser_graphe_entier(Graphe *G)
 {
@@ -14,6 +16,33 @@ void initialiser_graphe_entier(Graphe *G)
             G->chemins[i][g].distance = 0;
             G->chemins[i][g].etat = 0;
             G->chemins[i][g].capacité = 0;
+        }
+    }
+}
+
+void creer_graphe(Graphe *graphe, Tab_sommets *tab_sommets)
+{
+    initialiser_graphe_entier(graphe);
+    tab_sommets->sommets = malloc(N * sizeof(Summit_city));
+    tab_sommets->n_sommets = 0;
+    graphe->sommets_TAB = tab_sommets;
+    graphe->sommets = malloc(N * sizeof(Summit_city));
+
+    for (int i = 0; i < N; i++)
+    {
+        Summit_city sommet;
+        sommet.ID = i;
+        if (i < (N * 0.5))
+        {
+            sommet[i].type = 0;
+        }
+        else if (i < (N * 0.75) && sommet[i].type != 1)
+        {
+            sommet[i].type = 1;
+        }
+        else
+        {
+            sommet[i].type = 2;
         }
     }
 }
@@ -52,7 +81,7 @@ void ajouter_bat(Bat batiment_quelconque, Tab_sommets *tableau_bats_sommets, Gra
     tableau_bats_sommets->batiments[tableau_bats_sommets->n_bats++] = batiment_quelconque;
 }
 
-void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Sommet_ville *sommet_bat_supp)
+void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Summit_city *sommet_bat_supp)
 {
 
     Bat *cur = bat_a_supprimer;
@@ -75,16 +104,20 @@ void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Somm
     tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
 }
 
-void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Sommet_ville sommet_quelconque)
+void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Summit_city sommet_quelconque)
 {
-    int id = 0;
+    int index = sommet->n_sommets;
 
-    sommet->sommets = realloc(sommet->sommets, (sommet->n_sommets + 1) * sizeof(Bat));
-    sommet->sommets[sommet->n_sommets++] = sommet_quelconque;
-    G->sommets[sommet->n_sommets++] = sommet_quelconque;
-    G->sommets[sommet->n_sommets++].ID = sommet->n_sommets;
+    sommet->sommets = realloc(sommet->sommets, (index + 1) * (sommet->n_sommets + 1) * sizeof(Bat));
+    sommet->sommets[index] = sommet_quelconque;
+    sommet->n_sommets++;
+
+    G->sommets[index] = sommet_quelconque;
+    G->sommets[index].ID = index;
+
+    G->sommets_TAB->n_sommets++;
 }
-void seisme(Sommet_ville *sommet_seisme, int seisme_impact, Tab_sommets *sommet, Graphe *G)
+void seisme(Summit_city *sommet_seisme, int seisme_impact, Tab_sommets *sommet, Graphe *G)
 {
     // Effectuer la catstrophe sur une ville de manière aléatoire
 
@@ -143,29 +176,47 @@ void seisme(Sommet_ville *sommet_seisme, int seisme_impact, Tab_sommets *sommet,
 
 void verifier_accessibilite(Graphe *G, int ID_sommet_debut)
 {
-    srand(time(NULL));
+    /*srand(time(NULL));
     ID_sommet_debut = rand() % G->sommets_TAB->n_sommets;
-
+*/
     for (int j = 0; j < G->sommets_TAB->n_sommets; j++)
     {
         if (G->chemins[ID_sommet_debut][j].etat == 0)
         {
             printf("Le sommet %s est inacessible en partant du sommet %s", G->sommets[ID_sommet_debut].nom, G->sommets[j].nom);
         }
+        else
+        {
+            printf("Le sommet %s est accessible depuis %s\n",
+                   G->sommets[j].nom,
+                   G->sommets[ID_sommet_debut].nom);
+        }
     }
 }
 void afficher_route(Graphe *G, int ID_sommet_debut)
 {
+    /*srand(time(NULL));
+    ID_sommet_debut = rand() % G->sommets_TAB->n_sommets;*/
 
-    srand(time(NULL));
-    ID_sommet_debut = rand() % G->sommets_TAB->n_sommets;
-
-    for (int j = 0; j < G->sommets_TAB->n_sommets; j++)
+    /*for (int j = 0; j < G->sommets_TAB->n_sommets; j++)
     {
         if (G->chemins[ID_sommet_debut][j].etat > 0)
         {
             printf("Pour la Route allant de %s à %s\n Distance: %d\n  Etat:%d\n  Capacité:%d\n", G->sommets[ID_sommet_debut].nom, G->sommets[j].nom, G->chemins[ID_sommet_debut][j].distance, G->chemins[ID_sommet_debut][j].etat, G->chemins[ID_sommet_debut][j].capacité);
             printf("\n");
+        }
+    }*/
+
+    for (int j = 0; j < G->sommets_TAB->n_sommets; j++)
+    {
+        if (G->chemins[ID_sommet_debut][j].etat > 0)
+        {
+            printf("Route de %s à %s : Distance=%d, État=%d, Capacité=%d\n",
+                   G->sommets[ID_sommet_debut].nom,
+                   G->sommets[j].nom,
+                   G->chemins[ID_sommet_debut][j].distance,
+                   G->chemins[ID_sommet_debut][j].etat,
+                   G->chemins[ID_sommet_debut][j].capacité);
         }
     }
 }
