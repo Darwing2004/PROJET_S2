@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "structures.h"
 #include <time.h>
 
@@ -20,31 +21,68 @@ void initialiser_graphe_entier(Graphe *G)
     }
 }
 
-void creer_graphe(Graphe *graphe, Tab_sommets *tab_sommets)
+Graphe *Creation_graphe(int nsommets)
 {
-    initialiser_graphe_entier(graphe);
-    tab_sommets->sommets = malloc(N * sizeof(Summit_city));
-    tab_sommets->n_sommets = 0;
-    graphe->sommets_TAB = tab_sommets;
-    graphe->sommets = malloc(N * sizeof(Summit_city));
+    Graphe *G = malloc(sizeof(Graphe));
+    if (!G) {
+        perror("Erreur d'allocation mémoire pour le graphe");
+        exit(EXIT_FAILURE);
+    }
 
-    for (int i = 0; i < N; i++)
-    {
-        Summit_city sommet;
-        sommet.ID = i;
-        if (i < (N * 0.5))
-        {
-            sommet[i].type = 0;
+    G->sommets_TAB = malloc(sizeof(Tab_sommets));
+    if (!G->sommets_TAB) {
+        perror("Erreur d'allocation mémoire pour sommets_TAB");
+        exit(EXIT_FAILURE);
+    }
+
+    G->sommets_TAB->sommets = malloc(nsommets * sizeof(Sommet_ville));
+    G->sommets_TAB->n_sommets = 0;
+    G->sommets_TAB->n_bats = 0;
+
+    G->chemins = malloc(nsommets * sizeof(Route **));
+    for (int i = 0; i < nsommets; i++) {
+        G->chemins[i] = malloc(nsommets * sizeof(Route*));
+    }
+
+    for (int i = 0; i < nsommets; i++) {
+        int sommet_aleatoire = rand() % 100;
+        Sommet_ville sommet_ajoutee;
+        sommet_ajoutee.ID = i;
+        sommet_ajoutee.n_bats = 0;
+
+        if (sommet_aleatoire < 50) {
+            strcpy(sommet_ajoutee.type, "Ville");
+            sprintf(sommet_ajoutee.nom, "Ville S%d", sommet_ajoutee.ID);
+            sommet_ajoutee.population = 100000;
         }
-        else if (i < (N * 0.75) && sommet[i].type != 1)
-        {
-            sommet[i].type = 1;
+        else if (sommet_aleatoire < 75) {
+            strcpy(sommet_ajoutee.type, "Hopital");
+            sprintf(sommet_ajoutee.nom, "Hopital S%d", sommet_ajoutee.ID);
+            sommet_ajoutee.population = 200;
+            sommet_ajoutee.etat = 100;
         }
-        else
-        {
-            sommet[i].type = 2;
+        else {
+            strcpy(sommet_ajoutee.type, "Entrepot");
+            sprintf(sommet_ajoutee.nom, "Entrepot S%d", sommet_ajoutee.ID);
+            sommet_ajoutee.etat = 100;
+        }
+
+        ajouter_sommet(G->sommets_TAB, G, sommet_ajoutee);
+    }
+
+    initialiser_graphe_entier(G);
+
+    for (int i = 0; i < nsommets; i++) {
+        for (int j = 0; j < nsommets; j++) {
+            if (i != j && rand() % 3 == 0) {
+                int distance = rand() % 100;
+                creation_route(G, i, j, distance);
+                creation_route(G, j, i, distance);
+            }
         }
     }
+
+    return G;
 }
 
 void creation_route(Graphe *G, int id_depart, int id_arrivee, int distance_voulue)
@@ -81,7 +119,7 @@ void ajouter_bat(Bat batiment_quelconque, Tab_sommets *tableau_bats_sommets, Gra
     tableau_bats_sommets->batiments[tableau_bats_sommets->n_bats++] = batiment_quelconque;
 }
 
-void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Summit_city *sommet_bat_supp)
+void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Sommet_ville *sommet_bat_supp)
 {
 
     Bat *cur = bat_a_supprimer;
@@ -104,7 +142,7 @@ void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Summ
     tableau_bats_sommets->batiments = realloc(tableau_bats_sommets->batiments, tableau_bats_sommets->n_bats * sizeof(Bat));
 }
 
-void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Summit_city sommet_quelconque)
+void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Sommet_ville sommet_quelconque)
 {
     int index = sommet->n_sommets;
 
@@ -117,7 +155,7 @@ void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Summit_city sommet_quelconqu
 
     G->sommets_TAB->n_sommets++;
 }
-void seisme(Summit_city *sommet_seisme, int seisme_impact, Tab_sommets *sommet, Graphe *G)
+void seisme(Sommet_ville *sommet_seisme, int seisme_impact, Tab_sommets *sommet, Graphe *G)
 {
     // Effectuer la catstrophe sur une ville de manière aléatoire
 

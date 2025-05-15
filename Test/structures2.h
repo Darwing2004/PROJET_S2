@@ -60,12 +60,4 @@ typedef struct Graphe
 // Fonction de chaque fichier .c
 
 //     Mission1.c
-void initialiser_graphe_entier(Graphe *G);
-void creation_route(Graphe *G, int id_depart, int id_arrivee, int distance_voulue);
-void initialiser_tableau_batiment(Tab_sommets *tableau_bats_sommets, int nombre);
-void ajouter_bat(Bat batiment_quelconque, Tab_sommets *tableau_bats_sommets, Graphe *G, int id_desire);
-void supprimer_Bat(Tab_sommets *tableau_bats_sommets, Bat *bat_a_supprimer, Sommet_ville *sommet_bat_supp);
-void ajouter_sommet(Tab_sommets *sommet, Graphe *G, Sommet_ville sommet_quelconque);
-void seisme(Sommet_ville *sommet_seisme, int seisme_impact, Tab_sommets *sommet, Graphe *G);
-void verifier_accessibilite(Graphe *G, int ID_sommet_debut);
-void afficher_route(Graphe *G, int ID_sommet_debut);
+Graphe *Creation_graphe(int nsommets);
