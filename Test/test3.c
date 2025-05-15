@@ -1,31 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
+
+#define SOMMET_MAX 10
 #include <limits.h>
+
+typedef struct Summit_city
+{
+    int ID;
+    char type[50];
+    char nom[50];
+    int population;
+} Summit_city;
+
+typedef struct Route
+{
+    int distance;
+    int etat;
+    int capacité;
+} Route;
 
 // On cherhce a définir un graphe pour pouvoir tester toutes nos fonctionnalité
 typedef struct Graphe
 {
-    int nbSommet;
-    int **matrice;
+    Summit_city *sommets;
+    Route **chemins;
 } Graphe;
 
-Graphe *initialisation_matrice(int nbSommet)
+void initialisation(Graphe *graphe)
 {
     Graphe *graphe = malloc(sizeof(Graphe));
-    graphe->nbSommet = nbSommet;
-
-    graphe->matrice = malloc(nbSommet * sizeof(int *));
-    for (int i = 0; i < graphe->nbSommet; i++)
+    if(graphe == NULL)
     {
-        graphe->matrice[i] = malloc(nbSommet * sizeof(int));
-        for (int j = 0; j < graphe->nbSommet; j++)
-        {
-            graphe->matrice[i][j] = 0;
-        }
+        printf("Erreur malloc Graphe");
+        exit(EXIT_FAILURE);
     }
 
-    return graphe;
+    graphe->chemins = malloc(SOMMET_MAX * sizeof(Route));
+    if(graphe->chemins == NULL)
+    {
+        printf("Erreur malloc Chemin");
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < SOMMET_MAX; i++)
+    {
+        graphe->chemins = malloc(SOMMET_MAX * sizeof(Route));
+    }
+
+    for(int i = 0; i < SOMMET_MAX; i++)
+    {
+        for(int j = 0 ; j < SOMMET_MAX; j++)
+        {
+            graphe->chemins[i][j].capacité = 0;
+            graphe->chemins[i][j].distance = 0;
+            graphe->chemins[i][j].etat = -1;
+        }
+    }
 }
 
 void ajouterArete(Graphe *graphe, int u, int v, int poids)
@@ -37,11 +69,11 @@ void ajouterArete(Graphe *graphe, int u, int v, int poids)
 
 void libererGraphe(Graphe *graphe)
 {
-    for (int i = 0; i < graphe->nbSommet; i++)
+    for (int i = 0; i < SOMMET_MAX; i++)
     {
-        free(graphe->matrice[i]);
+        free(graphe->chemins[i]);
     }
-    free(graphe->matrice);
+    free(graphe->chemins);
     free(graphe);
 }
 
