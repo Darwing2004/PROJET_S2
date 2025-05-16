@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define SOMMET_MAX 10
+#define N 10
 #include <limits.h>
 
 typedef struct Summit_city
@@ -30,7 +30,7 @@ typedef struct Graphe
 
 void initialisation(Graphe *graphe)
 {
-    Graphe *graphe = malloc(sizeof(Graphe));
+    graphe = malloc(sizeof(Graphe));
     if(graphe == NULL)
     {
         printf("Erreur malloc Graphe");
@@ -62,7 +62,7 @@ void initialisation(Graphe *graphe)
 
 void ajouterArete(Graphe *graphe, int u, int v, int poids)
 {
-    graphe->matrice[u][v] = poids;
+    graphe->chemins[u][v] = poids;
     // Si le graphe est non orienté, décommente aussi :
     // g->adj[v][u] = poids;
 }
@@ -106,7 +106,6 @@ void afficher_chemin(int pred[], int j)
 
 void dijkstra(Graphe *graphe, int depart, int destination)
 {
-    int N = graphe->nbSommet;
    
     // Tableau qui stock les poids des sommets (poid : distance entre un sommet)
     int distance[N];

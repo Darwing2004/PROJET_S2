@@ -9,8 +9,6 @@ int main()
     int choix;
 
     initialiser_graphe_entier(&graphe);
-    
-
 
     printf("*********************************************************\n");
     printf("********** GESTION D'UNE CATASTROPHE NATURELLE **********\n");
