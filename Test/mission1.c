@@ -17,40 +17,43 @@ void initialiser_graphe_entier(Graphe *G)
     }
 }
 
-void ajouter_sommet(Tab_sommets* sommet,Graphe* G, Sommet_ville sommet_quelconque){
-   
-   
-    sommet->sommets=realloc(sommet->sommets, (sommet->n_sommets + 1) * sizeof(Sommet_ville));
-    sommet->sommets[sommet->n_sommets]=sommet_quelconque;
-    sommet->n_sommets++;
-
-    G->sommets[sommet->n_sommets]=sommet_quelconque;
-    G->sommets[sommet->n_sommets].ID=sommet_quelconque.ID;
-
-    for(int i=0; i<1000; i++){  
-        Bat nouveau_bat;
-        nouveau_bat.etat=100;
-        int etage_aleatoire=rand()%7;
-
-            if(etage_aleatoire>3){
-                nouveau_bat.etage=10;
-                nouveau_bat.appartements=nouveau_bat.etage*11;
-                nouveau_bat.capacite=nouveau_bat.appartements*4;
-            }
-            else if(etage_aleatoire>1 &&  etage_aleatoire<=3){
-                nouveau_bat.etage=7;
-                nouveau_bat.appartements=nouveau_bat.etage*8;
-                nouveau_bat.capacite=nouveau_bat.appartements*4;
-            }
-            else if(etage_aleatoire<=1){
-                nouveau_bat.etage=5;
-                nouveau_bat.appartements=nouveau_bat.etage*6;
-                nouveau_bat.capacite=nouveau_bat.appartements*4;
-            }
-
-        ajouter_bat(nouveau_bat, sommet_quelconque.ID, G->sommets_TAB, G);
+void ajouter_sommet(Tab_sommets *tab_sommets, Graphe *G, Sommet_ville sommet_quelconque)
+{
+    // Étape 1 : Réallocation du tableau de sommets
+    tab_sommets->sommets = realloc(tab_sommets->sommets, (tab_sommets->n_sommets + 1) * sizeof(Sommet_ville));
+    if (tab_sommets->sommets == NULL)
+    {
+        printf("Erreur d'allocation mémoire lors de l'ajout du sommet.\n");
+        return;
     }
-   
+
+    // Étape 2 : Ajouter le sommet à la fin du tableau
+    tab_sommets->sommets[tab_sommets->n_sommets] = sommet_quelconque;
+    tab_sommets->n_sommets++;
+
+    // Étape 3 : Mettre à jour le pointeur de sommets dans le graphe
+    G->sommets = tab_sommets->sommets;
+    G->sommets_TAB = tab_sommets;
+
+    // Étape 4 : Réallocation de la matrice des routes
+    G->chemins = realloc(G->chemins, tab_sommets->n_sommets * sizeof(Route *));
+    if (G->chemins == NULL)
+    {
+        printf("Erreur d'allocation mémoire pour les routes.\n");
+        return;
+    }
+
+    for (int i = 0; i < tab_sommets->n_sommets; i++)
+    {
+        G->chemins[i] = realloc(G->chemins[i], tab_sommets->n_sommets * sizeof(Route));
+        if (G->chemins[i] == NULL)
+        {
+            printf("Erreur d'allocation mémoire pour la ligne %d des routes.\n", i);
+            return;
+        }
+    }
+
+    printf("Sommet ajouté avec succès (ID : %d).\n", sommet_quelconque.ID);
 }
 
 Graphe *Creation_graphe(int nsommets)
@@ -106,7 +109,7 @@ Graphe *Creation_graphe(int nsommets)
             sommet_ajoutee.etat = 100;
         }
 
-        ajouter_sommet(G->sommets_TAB, sommet_ajoutee);
+        ajouter_sommet(G->sommets_TAB, G, sommet_ajoutee);
     }
 
     initialiser_graphe_entier(G);
@@ -247,9 +250,9 @@ void verifier_accessibilite(Graphe *G, int ID_sommet_debut)
     {
         if (G->chemins[ID_sommet_debut][j].etat == 0)
         {
-            printf("Le sommet %s est inacessible en partant du sommet %s", 
-                    G->sommets[ID_sommet_debut].nom, 
-                    G->sommets[j].nom);
+            printf("Le sommet %s est inacessible en partant du sommet %s",
+                   G->sommets[ID_sommet_debut].nom,
+                   G->sommets[j].nom);
         }
         else
         {
