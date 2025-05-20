@@ -6,6 +6,9 @@
 #define N 10
 #include <limits.h>
 
+void afficher_chemin(int pred[], int j);
+
+
 typedef struct Summit_city
 {
     int ID;
@@ -28,48 +31,52 @@ typedef struct Graphe
     Route **chemins;
 } Graphe;
 
-void initialisation(Graphe *graphe)
+Graphe *initialisation()
 {
-    graphe = malloc(sizeof(Graphe));
+    Graphe *graphe = malloc(sizeof(Graphe));
     if(graphe == NULL)
     {
         printf("Erreur malloc Graphe");
         exit(EXIT_FAILURE);
     }
 
-    graphe->chemins = malloc(SOMMET_MAX * sizeof(Route));
+    graphe->chemins = malloc(N * sizeof(Route));
     if(graphe->chemins == NULL)
     {
         printf("Erreur malloc Chemin");
         exit(EXIT_FAILURE);
     }
 
-    for(int i = 0; i < SOMMET_MAX; i++)
+    for(int i = 0; i < N; i++)
     {
-        graphe->chemins = malloc(SOMMET_MAX * sizeof(Route));
+        graphe->chemins = malloc(N * sizeof(Route));
     }
 
-    for(int i = 0; i < SOMMET_MAX; i++)
+    for(int i = 0; i < N; i++)
     {
-        for(int j = 0 ; j < SOMMET_MAX; j++)
+        for(int j = 0 ; j < N; j++)
         {
             graphe->chemins[i][j].capacité = 0;
             graphe->chemins[i][j].distance = 0;
             graphe->chemins[i][j].etat = -1;
         }
     }
+
+    return graphe;
 }
 
 void ajouterArete(Graphe *graphe, int u, int v, int poids)
 {
-    graphe->chemins[u][v] = poids;
+    graphe->chemins[u][v].distance = poids;
+    graphe->chemins[u][v].etat = 1;
+    graphe->chemins[u][v].capacité = 1;
     // Si le graphe est non orienté, décommente aussi :
     // g->adj[v][u] = poids;
 }
 
 void libererGraphe(Graphe *graphe)
 {
-    for (int i = 0; i < SOMMET_MAX; i++)
+    for (int i = 0; i < N; i++)
     {
         free(graphe->chemins[i]);
     }
@@ -78,7 +85,7 @@ void libererGraphe(Graphe *graphe)
 }
 
 // CEtte fonction sert a trouver le sommet qui a le poid le plus petit.
-int minDistance(int distance[], bool visited[], int N)
+int minDistance(int distance[], bool visited[])
 {
     int min = INT_MAX, min_index = -1;
     for (int i = 0; i < N; i++)
@@ -131,7 +138,7 @@ void dijkstra(Graphe *graphe, int depart, int destination)
     for (int i = 0; i < N - 1; i++)
     {
         //minDistance renvoie l'indice de la distance la plus petite entre le départ et le prochain sommet
-        int u = minDistance(distance, visited, N);
+        int u = minDistance(distance, visited);
 
         if (u == -1)
             break;
@@ -141,15 +148,15 @@ void dijkstra(Graphe *graphe, int depart, int destination)
 
         for (int v = 0; v < N; v++)
         {
-            if (!visited[v] && graphe->matrice[u][v] != 0 && distance[u] != INT_MAX && distance[u] + graphe->matrice[u][v] < distance[v])
+            if (!visited[v] && graphe->chemins[u][v].distance != 0 && distance[u] != INT_MAX && distance[u] + graphe->chemins[u][v].distance < distance[v])
             {
-                distance[v] = distance[u] + graphe->matrice[u][v];
+                distance[v] = distance[u] + graphe->chemins[u][v].distance;
                 predecessor[v] = u;
             }
         }
     }
 
-    if (distance[destination == INT_MAX])
+    if (distance[destination] == INT_MAX)
     {
         printf("Il n'y a pas de chemin entre %d et %d\n", depart, destination);
         printf("\n");
@@ -166,7 +173,7 @@ void dijkstra(Graphe *graphe, int depart, int destination)
 int main()
 {
     int n = 6; // A, B, C, D, E
-    Graphe *g = initialisation_matrice(n);
+    Graphe *g = initialisation();
 
     ajouterArete(g, 0, 1, 2);  // A->B
     ajouterArete(g, 0, 3, 11); // A->C
