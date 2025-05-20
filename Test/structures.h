@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define taille_max 100
+#define taille_max 10
 
 typedef struct ressources
 {
