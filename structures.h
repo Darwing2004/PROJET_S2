@@ -9,17 +9,10 @@ typedef struct ressources {
 
 
 typedef struct Bat {
-    char type[50];
-    char etat_courant[50];
     int ID_Bat;
     int etage;
-    int x;
-    int y;
-    int hauteur;
-    int age;
     int capacite;
     int etat;  
-    ressources* bat_stock; 
 } Bat;
 
 
